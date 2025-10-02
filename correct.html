@@ -1,14 +1,12 @@
 <!DOCTYPE html>
-<html>
-
-<meta charset="UTF-8">
-<title>Formulário de Cadastro</title>
-
+<html lang="pt-BR">
 <head>
+    <meta charset="UTF-8">
+    <title>Formulário de Cadastro</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #004b2c;
+            background-color: #ffffff;
             justify-content: center;
             align-items: center;
             height: 100vh;
@@ -17,24 +15,23 @@
         }
 
         .card {
-            background-color: #ffffff;
-            color:#0b1727 ;
+            background-color: #202020;
+            color: #ffffff;
             border-radius: 10px;
             padding: 20px;
             width: 320px;
-            box-shadow: 2px 2px 6px rgba(250, 250, 250, 0.884);
         }
-
 
         .card h2 {
             text-align: center;
-            margin-top: 0;
+            margin-top: 5;
             font-size: 4vh;
         }
 
         label {
             display: block;
             margin-top: 8px;
+            font-size: larger;
         }
 
         input {
@@ -43,8 +40,6 @@
             margin-top: 4px;
             box-sizing: border-box;
             border-radius: 10px;
-            border-color: #0b1727;
-
         }
 
         .actions {
@@ -60,64 +55,205 @@
             cursor: pointer;
         }
 
-
-
         .actions input {
-            background-color: #ff9900;
-            color: white;
+            background-color: #5A4EFF;
+            color: rgb(255, 255, 255);
         }
 
         .actions button {
             background-color: #000000;
-            color:#ffffff;
+            color: #ffffff;
             border-radius: 10px;
         }
+
+        .actions button:hover {
+            background-color: #E2F4A6;
+            color: #000000;
+        }
+
+        .actions input:hover {
+            background-color: #E2F4A6;
+            color:#000000
+        }
+
+        .error-message {
+            color: #ffea2b;
+            font-size: 12px;
+            margin-top: 2px;
+            display: none;
+        }
+
+        .input-error {
+            border: 1px solid #ff6b6b;
+        }
     </style>
-    
-    <script>
-        function validarFormulario() {
-            let nome = document.getElementById("nome").value;
-            let email = document.getElementById("email").value;
-            let senha = document.getElementById("senha").value;
-            let telefone = document.getElementById("telefone").value;
-            let idade = document.getElementById("idade").value;
-            if (nome == "" || email == "" || senha == "") {alert("Por favor, preencha todos os campos!");
-                return false;
-                return true;
-                }
-                }
-        
-        function limparFormulario() {
-            document.getElementById("formCadastro").reset();
-        }
-        function enviarFormulario() {
-            if (validarFormulario()) {
-                alert("Formulário enviado (simulação).");
-                // aqui poderia ter código para enviar via fetch/XHR
-            }
-        }
-    </script>
 </head>
 
 <body>
     <div class="card">
         <h2>Cadastro</h2>
+
         <form id="formCadastro" onsubmit="return validarFormulario()">
             <label for="nome">Nome</label>
-            <input type="text" id="nome" name="nome">
+            <input type="text" id="nome" name="nome" oninput="validarNome()">
+            <div id="nomeError" class="error-message">O nome deve conter apenas letras</div>
+            
+
             <label for="email">E-mail</label>
-            <input type="text" id="email" name="email">
+            <input type="text" id="email" name="email" onblur="validarEmail()">
+            <div id="emailError" class="error-message">Formato de e-mail inválido</div>
+            
+
             <label for="senha">Senha</label>
             <input type="password" id="senha" name="senha">
+            
+
             <label for="telefone">Telefone</label>
-            <input type="email" id="telefone" name="telefone">
+            <input type="text" id="telefone" name="telefone" onblur="formatarTelefone()">
+            <div id="telefoneError" class="error-message">Formato de telefone inválido</div>
+            
+
             <label for="idade">Idade</label>
-            <input type="email" id="idade" name="idade">
+            <input type="text" id="idade" name="idade" oninput="validarIdade()">
+            <div id="idadeError" class="error-message">A idade deve conter apenas números</div>
+            
+
             <div class="actions">
                 <input type="button" value="Cadastrar" onclick="enviarFormulario()">
                 <button type="button" onclick="limparFormulario()">Limpar</button>
             </div>
         </form>
     </div>
+
+    <script>
+        
+        function validarNome() {
+            const nomeInput = document.getElementById("nome");
+            const nomeError = document.getElementById("nomeError");
+            const regex = /^[A-Za-zÀ-ÿ\s]+$/; 
+            
+            if (!regex.test(nomeInput.value) && nomeInput.value !== "") {
+                nomeInput.classList.add("input-error");
+                nomeError.style.display = "block";
+                return false;
+            } else {
+                nomeInput.classList.remove("input-error");
+                nomeError.style.display = "none";
+                return true;
+            }
+        }
+
+       
+        function validarEmail() {
+            const emailInput = document.getElementById("email");
+            const emailError = document.getElementById("emailError");
+            const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            
+            if (!regex.test(emailInput.value) && emailInput.value !== "") {
+                emailInput.classList.add("input-error");
+                emailError.style.display = "block";
+                return false;
+            } else {
+                emailInput.classList.remove("input-error");
+                emailError.style.display = "none";
+                return true;
+            }
+        }
+
+     
+        function formatarTelefone() {
+            const telefoneInput = document.getElementById("telefone");
+            const telefoneError = document.getElementById("telefoneError");
+            
+           
+            let numero = telefoneInput.value.replace(/\D/g, '');
+            
+          
+            if (numero.length === 11) {
+                numero = numero.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+            } else if (numero.length === 10) {
+                numero = numero.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
+            }
+            
+            telefoneInput.value = numero;
+            
+          
+            const regex = /^\(\d{2}\)\s\d{4,5}-\d{4}$/;
+            
+            if (!regex.test(telefoneInput.value) && telefoneInput.value !== "") {
+                telefoneInput.classList.add("input-error");
+                telefoneError.style.display = "block";
+                return false;
+            } else {
+                telefoneInput.classList.remove("input-error");
+                telefoneError.style.display = "none";
+                return true;
+            }
+        }
+
+       
+        function validarIdade() {
+            const idadeInput = document.getElementById("idade");
+            const idadeError = document.getElementById("idadeError");
+            const regex = /^\d+$/; 
+            
+            if (!regex.test(idadeInput.value) && idadeInput.value !== "") {
+                idadeInput.classList.add("input-error");
+                idadeError.style.display = "block";
+                return false;
+            } else {
+                idadeInput.classList.remove("input-error");
+                idadeError.style.display = "none";
+                return true;
+            }
+        }
+
+ 
+        function validarFormulario() {
+            const nomeValido = validarNome();
+            const emailValido = validarEmail();
+            const telefoneValido = formatarTelefone();
+            const idadeValida = validarIdade();
+            
+            let nome = document.getElementById("nome").value;
+            let email = document.getElementById("email").value;
+            let senha = document.getElementById("senha").value;
+            
+            if (nome === "" || email === "" || senha === "") {
+                alert("Por favor, preencha todos os campos obrigatórios!");
+                return false;
+            }
+            
+           
+            if (nomeValido && emailValido && telefoneValido && idadeValida) {
+                return true;
+            } else {
+                alert("Por favor, corrija os erros no formulário antes de enviar.");
+                return false;
+            }
+        }
+
+        function limparFormulario() {
+            document.getElementById("formCadastro").reset();
+            
+            
+            const errorMessages = document.querySelectorAll('.error-message');
+            errorMessages.forEach(msg => {
+                msg.style.display = 'none';
+            });
+            
+            const errorInputs = document.querySelectorAll('.input-error');
+            errorInputs.forEach(input => {
+                input.classList.remove('input-error');
+            });
+        }
+
+        function enviarFormulario() {
+            if (validarFormulario()) {
+                alert("Formulário enviado com sucesso!");
+               
+            }
+        }
+    </script>
 </body>
 </html>
